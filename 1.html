@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heatmap Tracker Test Page</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9fafb;
+            color: #111827;
+            /* Creates a long page to test scrolling and pageY coordinates */
+            height: 2000px;
+        }
+
+        .navbar {
+            background-color: #ffffff;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 4rem auto;
+            padding: 0 2rem;
+        }
+
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .btn:hover {
+            background-color: #1d4ed8;
+        }
+
+        .btn-danger {
+            background-color: #dc2626;
+        }
+
+        .btn-danger:hover {
+            background-color: #b91c1c;
+        }
+
+        .footer-trigger {
+            margin-top: 1200px;
+            /* Forces this element way down the page */
+            background: #f3f4f6;
+            padding: 2rem;
+            text-align: center;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <strong>AnalyticsLab Dashboard</strong>
+        <button class="btn" id="nav-login-btn">Log In</button>
+    </nav>
+
+    <div class="container">
+        <div class="card">
+            <h1>Heatmap Tracking Test Area</h1>
+            <p>Click anywhere on this page to trigger tracking events. Open your browser's Developer Tools (F12) and
+                check the <strong>Network tab</strong> to see the outgoing payloads.</p>
+            <button class="btn" id="main-cta-button">Click Me (Primary CTA)</button>
+            <button class="btn btn-danger" id="cancel-button">Cancel Action</button>
+        </div>
+
+        <div class="card">
+            <h2>Regular Text Links</h2>
+            <p>You can also click inline elements like this <a href="#" id="test-inline-link">sample hyperlink text</a>
+                to see how the script handles specific target tags.</p>
+        </div>
+
+        <div class="footer-trigger" id="deep-scroll-section">
+            <h3>Deep Scroll Section</h3>
+            <p>If you click this button after scrolling all the way down, notice how <code>click_y</code> accurately
+                reflects a value greater than your screen height!</p>
+            <button class="btn" id="bottom-conversion-btn">Bottom Button</button>
+        </div>
+    </div>
+
+    <script src="track.js" async></script>
+</body>
+
+</html>
