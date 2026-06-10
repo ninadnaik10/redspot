@@ -6,8 +6,9 @@
   if (window.__heatmapTrackerInitialized) return;
   window.__heatmapTrackerInitialized = true;
 
-  function handlePageClick(event) {
+  function handleInteraction(event) {
     try {
+      const target = event.target instanceof Element ? event.target : null;
       const payload = {
         event_type: "click",
         url: window.location.href,
@@ -15,8 +16,8 @@
         timestamp: new Date().toISOString(),
 
         // Coordinates relative to the top-left of the entire document
-        click_x: event.pageX,
-        click_y: event.pageY,
+        click_x: Math.round(event.pageX),
+        click_y: Math.round(event.pageY),
 
         // Current dimensions of the browser window (crucial for normalization later)
         screen_width: window.innerWidth,
@@ -25,9 +26,10 @@
         doc_height: document.documentElement.scrollHeight,
 
         // Optional: Target element tracking
-        target_tag: event.target.tagName.toLowerCase(),
-        target_id: event.target.id || null,
-        target_class: event.target.className || null,
+        target_tag: target?.tagName.toLowerCase() || null,
+        target_id: target?.id || null,
+        target_class: target?.className || null,
+        target_text: target?.textContent?.trim().slice(0, 120) || null,
       };
 
       const body = JSON.stringify(payload);
@@ -51,5 +53,8 @@
     }
   }
 
-  document.addEventListener("click", handlePageClick, { passive: true });
+  document.addEventListener("pointerdown", handleInteraction, {
+    capture: true,
+    passive: true,
+  });
 })();
