@@ -1,6 +1,5 @@
 (function () {
-  const INGEST_ENDPOINT =
-    "https://httpdump.app/dumps/c178c8f8-46dc-48c0-a741-c0df558ccbf4";
+  const INGEST_ENDPOINT = "http://localhost:8000/api/v1/events";
 
   // Prevent multiple initializations
   if (window.__heatmapTrackerInitialized) return;
