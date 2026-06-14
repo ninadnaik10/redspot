@@ -2,8 +2,8 @@
   const INGEST_ENDPOINT = "http://localhost:8000/api/v1/events";
 
   // Prevent multiple initializations
-  if (window.__heatmapTrackerInitialized) return;
-  window.__heatmapTrackerInitialized = true;
+  if (window.__redspotTrackerInitialized) return;
+  window.__redspotTrackerInitialized = true;
 
   function handleInteraction(event) {
     try {
@@ -48,7 +48,7 @@
         }).catch(() => {});
       }
     } catch (error) {
-      console.error("Heatmap tracking error:", error);
+      console.error("Redspot tracking error:", error);
     }
   }
 
@@ -56,4 +56,28 @@
     capture: true,
     passive: true,
   });
+
+  // Allow parent frames to scroll this page via postMessage
+  window.addEventListener("message", function (e) {
+    if (e.data?.type === "redspot:scroll") {
+      window.scrollBy(e.data.deltaX, e.data.deltaY);
+    }
+  });
+
+  // Report scroll position and doc dimensions to parent
+  function reportMetrics() {
+    if (window.parent !== window) {
+      window.parent.postMessage({
+        type: "redspot:metrics",
+        scrollY: window.scrollY,
+        docWidth: document.documentElement.scrollWidth,
+        docHeight: document.documentElement.scrollHeight,
+        viewportWidth: window.innerWidth,
+        viewportHeight: window.innerHeight,
+      }, "*");
+    }
+  }
+  window.addEventListener("scroll", reportMetrics, { passive: true });
+  window.addEventListener("resize", reportMetrics, { passive: true });
+  window.addEventListener("load", reportMetrics);
 })();

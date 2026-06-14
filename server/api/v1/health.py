@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from models import HealthResponse
-from datetime import datetime
+from datetime import datetime, timezone
 from config import settings
 
 
@@ -11,6 +11,6 @@ router = APIRouter()
 def health_check():
     return {
         "status": "ok",
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "version": settings.app_version,
     }

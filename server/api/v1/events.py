@@ -11,11 +11,9 @@ router = APIRouter()
 async def collect_event(request: Request):
     try:
         event = await EventService.parse_and_validate_event(request)
-
         if event:
             client_host = request.client.host if request.client else None
             await EventService.process_event(event, client_host)
-
         return {"ok": True, "message": "Event received"}
     except Exception as e:
         logger.error(f"Error processing event: {e}")

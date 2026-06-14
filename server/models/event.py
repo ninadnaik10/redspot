@@ -1,7 +1,5 @@
 from pydantic import BaseModel, Field, field_validator
-from typing import Optional, Any
-from datetime import datetime
-
+from typing import Optional
 
 class ClickEvent(BaseModel):
     event_type: str = Field(default="click", description="Type of event")
@@ -21,13 +19,6 @@ class ClickEvent(BaseModel):
     target_id: Optional[str] = Field(default=None, description="Target element ID")
     target_class: Optional[str] = Field(default=None, description="Target element classes")
     target_text: Optional[str] = Field(default=None, description="Target element text")
-
-    @field_validator('timestamp')
-    @classmethod
-    def validate_timestamp(cls, v):
-        if isinstance(v, str):
-            return v
-        return str(v)
 
 
 class HealthResponse(BaseModel):

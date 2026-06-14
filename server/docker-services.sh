@@ -25,13 +25,13 @@ case "$1" in
     docker-compose ps
     ;;
   clickhouse-client)
-    docker exec -it heatmap-clickhouse clickhouse-client --host localhost
+    docker exec -it redspot-clickhouse clickhouse-client --host localhost
     ;;
   kafka-topics)
-    docker exec -it heatmap-kafka kafka-topics --bootstrap-server localhost:9092 "${@:2}"
+    docker exec -it redspot-kafka kafka-topics --bootstrap-server localhost:9092 "${@:2}"
     ;;
   kafka-consume)
-    docker exec -it heatmap-kafka kafka-console-consumer --topic heatmap_events --bootstrap-server localhost:9092 --from-beginning
+    docker exec -it redspot-kafka kafka-console-consumer --topic redspot_events --bootstrap-server localhost:9092 --from-beginning
     ;;
   reset)
     echo "WARNING: This will delete all data!"

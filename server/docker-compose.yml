@@ -2,15 +2,15 @@ services:
   clickhouse:
     image: clickhouse/clickhouse-server:latest
     platform: linux/arm64
-    container_name: heatmap-clickhouse
+    container_name: redspot-clickhouse
     ports:
       - "8123:8123"
       - "9000:9000"
     volumes:
       - clickhouse_data:/var/lib/clickhouse
-      - ./db/init_clickhouse.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./db/clickhouse/init_clickhouse.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
-      CLICKHOUSE_DB: heatmap
+      CLICKHOUSE_DB: redspot
       CLICKHOUSE_USER: default
       CLICKHOUSE_PASSWORD: ""
       CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
@@ -20,12 +20,12 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - heatmap-network
+      - redspot-network
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
     platform: linux/arm64
-    container_name: heatmap-zookeeper
+    container_name: redspot-zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
@@ -35,12 +35,12 @@ services:
       - zookeeper_data:/var/lib/zookeeper/data
       - zookeeper_log:/var/lib/zookeeper/log
     networks:
-      - heatmap-network
+      - redspot-network
 
   kafka:
     image: confluentinc/cp-kafka:7.5.0
     platform: linux/arm64
-    container_name: heatmap-kafka
+    container_name: redspot-kafka
     depends_on:
       zookeeper:
         condition: service_started
@@ -63,23 +63,23 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - heatmap-network
+      - redspot-network
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
     platform: linux/arm64
-    container_name: heatmap-kafka-ui
+    container_name: redspot-kafka-ui
     depends_on:
       kafka:
         condition: service_healthy
     ports:
-      - "8080:8080"
+      - "8090:8080"
     environment:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9093
       KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
     networks:
-      - heatmap-network
+      - redspot-network
 
 volumes:
   clickhouse_data:
@@ -88,5 +88,5 @@ volumes:
   kafka_data:
 
 networks:
-  heatmap-network:
+  redspot-network:
     driver: bridge

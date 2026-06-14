@@ -19,8 +19,8 @@ def get_clickhouse_client():
 
 def init_database():
     client = get_clickhouse_client()
-    client.command("CREATE DATABASE IF NOT EXISTS heatmap")
-    client.command("USE heatmap")
+    client.command("CREATE DATABASE IF NOT EXISTS redspot")
+    client.command("USE redspot")
     client.command("""
         CREATE TABLE IF NOT EXISTS click_events (
             event_type String,

@@ -1,6 +1,6 @@
-CREATE DATABASE IF NOT EXISTS heatmap;
+CREATE DATABASE IF NOT EXISTS redspot;
 
-CREATE TABLE IF NOT EXISTS heatmap.click_events (
+CREATE TABLE IF NOT EXISTS redspot.click_events (
     event_type String,
     url String,
     path String,
@@ -21,7 +21,7 @@ PARTITION BY toYYYYMM(timestamp)
 ORDER BY (timestamp, path, url)
 SETTINGS index_granularity = 8192;
 
-CREATE TABLE IF NOT EXISTS heatmap.click_events_aggregated (
+CREATE TABLE IF NOT EXISTS redspot.click_events_aggregated (
     date Date,
     path String,
     hourly_timestamp DateTime,

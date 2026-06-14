@@ -44,7 +44,7 @@ def save_event(event: ClickEvent) -> None:
 
     try:
         client.insert(
-            "heatmap.click_events",
+            "redspot.click_events",
             data,
             column_names=columns
         )
@@ -55,7 +55,7 @@ def save_event(event: ClickEvent) -> None:
         raise
 
 
-def get_heatmap_data(path: str, start_date: datetime, end_date: datetime) -> List[Dict[str, Any]]:
+def get_click_heatmap_data(path: str) -> List[Dict[str, Any]]:
     client = get_clickhouse_client()
 
     query = """
@@ -63,17 +63,17 @@ def get_heatmap_data(path: str, start_date: datetime, end_date: datetime) -> Lis
             click_x,
             click_y,
             screen_width,
-            screen_height,
-            count() as click_count
-        FROM heatmap.click_events
+            doc_width,
+            doc_height
+        FROM redspot.click_events
         WHERE path = %(path)s
-          AND timestamp >= %(start_date)s
-          AND timestamp <= %(end_date)s
-        GROUP BY click_x, click_y, screen_width, screen_height
-        ORDER BY click_count DESC
+        ORDER BY timestamp DESC
+        LIMIT 10000
     """
 
-    return client.query_df(query, parameters={"path": path, "start_date": start_date, "end_date": end_date})
+    result = client.query(query, parameters={"path": path})
+    columns = ["click_x", "click_y", "screen_width", "doc_width", "doc_height"]
+    return [dict(zip(columns, row)) for row in result.result_rows]
 
 
 def get_click_stats(path: str = None) -> Dict[str, Any]:
@@ -86,7 +86,7 @@ def get_click_stats(path: str = None) -> Dict[str, Any]:
                 uniqExact(url) as unique_urls,
                 min(timestamp) as first_click,
                 max(timestamp) as last_click
-            FROM heatmap.click_events
+            FROM redspot.click_events
             WHERE path = %(path)s
         """
         return client.query_dict(query, parameters={"path": path})[0]
@@ -97,6 +97,6 @@ def get_click_stats(path: str = None) -> Dict[str, Any]:
                 uniqExact(url) as unique_urls,
                 min(timestamp) as first_click,
                 max(timestamp) as last_click
-            FROM heatmap.click_events
+            FROM redspot.click_events
         """
         return client.query_dict(query)[0]

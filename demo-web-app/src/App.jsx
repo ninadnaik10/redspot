@@ -140,7 +140,7 @@ function Header() {
           <span className="grid size-9 place-items-center rounded-lg bg-slate-950 text-white">
             <ShoppingBag className="size-5" />
           </span>
-          <span className="text-lg font-semibold">Heatmap Demo Store</span>
+          <span className="text-lg font-semibold">Redspot Demo Store</span>
         </a>
         <div className="hidden min-w-0 flex-1 justify-center md:flex">
           <div className="flex w-full max-w-md items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-500">

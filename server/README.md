@@ -1,6 +1,6 @@
-# Website Heatmap Collector
+# Redspot
 
-Scalable FastAPI server for collecting and processing website heatmap events with ClickHouse and Kafka.
+Scalable FastAPI server for collecting and processing website click events with ClickHouse and Kafka.
 
 ## Folder Structure
 
@@ -30,13 +30,16 @@ server/
 ├── utils/                # Utility functions
 │   ├── __init__.py
 │   └── logger.py        # Logging utilities
-└── db/                   # Database connections
+├── db/                   # Database connections
+│   └── clickhouse/      # ClickHouse integration
+│       ├── __init__.py
+│       ├── connection.py # ClickHouse connection
+│       ├── queries.py    # ClickHouse queries
+│       └── init_clickhouse.sql
+└── messaging/            # Kafka messaging
     ├── __init__.py
-    ├── clickhouse.py    # ClickHouse integration
-    ├── connection.py    # ClickHouse connection
-    ├── queries.py       # ClickHouse queries
-    ├── kafka.py         # Kafka integration
-    └── producer.py      # Kafka producer
+    ├── producer.py       # Kafka producer
+    └── consumer.py       # Kafka consumer
 ```
 
 ## Quick Start
@@ -105,7 +108,7 @@ uvicorn main:app --reload --host 127.0.0.1 --port 8000
 - `GET /api/v1/health` - Server health status
 
 ### Event Ingestion
-- `POST /api/v1/events` - Collect click heatmap events
+- `POST /api/v1/events` - Collect click events
 
 ## Environment Variables
 
@@ -117,11 +120,11 @@ uvicorn main:app --reload --host 127.0.0.1 --port 8000
 | CORS_ORIGINS | Allowed CORS origins | localhost:5173 |
 | CLICKHOUSE_HOST | ClickHouse server | localhost |
 | CLICKHOUSE_PORT | ClickHouse HTTP port | 8123 |
-| CLICKHOUSE_DATABASE | ClickHouse database | heatmap |
+| CLICKHOUSE_DATABASE | ClickHouse database | redspot |
 | CLICKHOUSE_USER | ClickHouse user | default |
 | CLICKHOUSE_PASSWORD | ClickHouse password | (empty) |
 | KAFKA_BOOTSTRAP_SERVERS | Kafka servers | localhost:9092 |
-| KAFKA_TOPIC | Kafka topic | heatmap_events |
+| KAFKA_TOPIC | Kafka topic | redspot_events |
 
 ## Database Schema
 
@@ -129,7 +132,7 @@ uvicorn main:app --reload --host 127.0.0.1 --port 8000
 
 **click_events** - Raw click event data
 ```sql
-CREATE TABLE heatmap.click_events (
+CREATE TABLE redspot.click_events (
     event_type String,
     url String,
     path String,
@@ -178,7 +181,7 @@ curl -X POST http://localhost:8000/api/v1/events \
 ### Verify ClickHouse Data
 
 ```bash
-docker exec -it heatmap-clickhouse clickhouse-client --query "SELECT * FROM heatmap.click_events LIMIT 10 FORMAT Pretty"
+docker exec -it redspot-clickhouse clickhouse-client --query "SELECT * FROM redspot.click_events LIMIT 10 FORMAT Pretty"
 ```
 
 ### Verify Kafka Messages
@@ -195,9 +198,9 @@ Client App (React)
 FastAPI Server
     ├─→ Kafka Producer (async)
     │       ↓
-    │   Kafka Topic (heatmap_events)
+    │   Kafka Topic (redspot_events)
     │       ↓
-    │   Kafka Consumer (future)
+    │   Kafka Consumer (async)
     │       ↓
     └─→ ClickHouse (persistent storage)
 ```
@@ -216,10 +219,10 @@ docker-compose logs clickhouse kafka
 ### ClickHouse connection issues
 ```bash
 # Verify ClickHouse is running
-docker exec -it heatmap-clickhouse clickhouse-client --query "SELECT 1"
+docker exec -it redspot-clickhouse clickhouse-client --query "SELECT 1"
 
 # Check database exists
-docker exec -it heatmap-clickhouse clickhouse-client --query "SHOW DATABASES"
+docker exec -it redspot-clickhouse clickhouse-client --query "SHOW DATABASES"
 ```
 
 ### Kafka connection issues
@@ -228,5 +231,5 @@ docker exec -it heatmap-clickhouse clickhouse-client --query "SHOW DATABASES"
 ./docker-services.sh kafka-topics --list
 
 # Create topic manually
-docker exec -it heatmap-kafka kafka-topics --create --topic heatmap_events --bootstrap-server localhost:9092
+docker exec -it redspot-kafka kafka-topics --create --topic redspot_events --bootstrap-server localhost:9092
 ```
