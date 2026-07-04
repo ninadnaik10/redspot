@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 from api.v1.router import api_router
 from config import settings
 from messaging import start_consumer, stop_consumer
+from db.postgres import init_postgres, close_postgres
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -16,10 +17,12 @@ logging.basicConfig(
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    await init_postgres()
     consumer_task = asyncio.create_task(start_consumer())
     yield
     stop_consumer()
     await consumer_task
+    await close_postgres()
 
 
 app = FastAPI(
@@ -32,8 +35,8 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,
-    allow_credentials=False,
-    allow_methods=["POST", "OPTIONS", "GET"],
+    allow_credentials=True,
+    allow_methods=["POST", "OPTIONS", "GET", "PATCH", "DELETE"],
     allow_headers=["*"],
 )
 

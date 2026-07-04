@@ -49,7 +49,7 @@ venv.bak/
 
 # FastAPI
 staticfiles/
-alembic/versions/
+alembic/versions/__pycache__/
 
 # ClickHouse & Kafka data
 clickhouse_data/

@@ -65,6 +65,26 @@ services:
     networks:
       - redspot-network
 
+  postgres:
+    image: postgres:16-alpine
+    platform: linux/arm64
+    container_name: redspot-postgres
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: redspot
+      POSTGRES_USER: redspot
+      POSTGRES_PASSWORD: redspot
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U redspot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - redspot-network
+
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
     platform: linux/arm64
@@ -83,6 +103,7 @@ services:
 
 volumes:
   clickhouse_data:
+  postgres_data:
   zookeeper_data:
   zookeeper_log:
   kafka_data:

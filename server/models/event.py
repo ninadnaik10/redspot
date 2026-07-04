@@ -21,6 +21,24 @@ class ClickEvent(BaseModel):
     target_text: Optional[str] = Field(default=None, description="Target element text")
 
 
+class UserCreate(BaseModel):
+    name: str
+    email: str
+
+
+class UserResponse(BaseModel):
+    id: str
+    name: str
+    email: str
+    created_at: str
+    updated_at: str
+
+
+class UserUpdate(BaseModel):
+    name: Optional[str] = None
+    email: Optional[str] = None
+
+
 class HealthResponse(BaseModel):
     status: str
     timestamp: str
@@ -30,3 +48,20 @@ class HealthResponse(BaseModel):
 class EventResponse(BaseModel):
     ok: bool
     message: Optional[str] = None
+
+
+class RegisterRequest(BaseModel):
+    name: str
+    email: str
+    password: str = Field(min_length=8)
+
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    user: UserResponse
