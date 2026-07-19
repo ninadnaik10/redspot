@@ -3,6 +3,7 @@ from typing import Optional
 
 class ClickEvent(BaseModel):
     event_type: str = Field(default="click", description="Type of event")
+    site_id: str = Field(description="Website site ID")
     url: str = Field(description="Full URL where event occurred")
     path: str = Field(description="URL path")
     timestamp: str = Field(description="ISO timestamp of event")
@@ -65,3 +66,16 @@ class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
     user: UserResponse
+
+
+class WebsiteCreate(BaseModel):
+    name: str
+    url: str
+
+
+class WebsiteResponse(BaseModel):
+    id: str
+    site_id: str
+    name: str
+    url: str
+    created_at: str

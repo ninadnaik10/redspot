@@ -1,21 +1,11 @@
 import { useState } from "react";
 import { Button, Card, Chip, Typography } from "@heroui/react";
-import { Flame, Globe, ArrowRight, Layers, BarChart3, LogOut } from "lucide-react";
+import { Flame, Layers, BarChart3, LogOut } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 
-function Sidebar({ siteUrl, onUrlChange, path, onPathChange }) {
+function Sidebar({ siteUrl, path, onPathChange }) {
   const { user, logout } = useAuth();
-  const [inputUrl, setInputUrl] = useState(siteUrl);
   const [inputPath, setInputPath] = useState(path);
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    let url = inputUrl.trim();
-    if (url && !url.startsWith("http")) {
-      url = "http://" + url;
-    }
-    onUrlChange(url);
-  }
 
   return (
     <aside className="flex w-72 shrink-0 flex-col border-r border-slate-200 bg-white">
@@ -27,28 +17,6 @@ function Sidebar({ siteUrl, onUrlChange, path, onPathChange }) {
       </div>
 
       <div className="flex flex-1 flex-col gap-5 overflow-y-auto p-5">
-        <div>
-          <Typography className="mb-2 text-xs font-medium uppercase tracking-wider text-slate-400">
-            Target Site
-          </Typography>
-          <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
-            <div className="flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm">
-              <Globe className="size-4 shrink-0 text-slate-400" />
-              <input
-                className="w-full border-none bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400"
-                onChange={(e) => setInputUrl(e.target.value)}
-                placeholder="http://localhost:5174"
-                type="text"
-                value={inputUrl}
-              />
-            </div>
-            <Button fullWidth size="sm" type="submit">
-              Load Site
-              <ArrowRight className="size-3.5" />
-            </Button>
-          </form>
-        </div>
-
         <div>
           <Typography className="mb-2 text-xs font-medium uppercase tracking-wider text-slate-400">
             Page Path

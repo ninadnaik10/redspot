@@ -1,5 +1,10 @@
 (function () {
-  const INGEST_ENDPOINT = "http://localhost:8000/api/v1/events";
+  // Read config from the script tag's data attributes
+  const currentScript = document.currentScript;
+  const SITE_ID = currentScript?.getAttribute("data-site-id") || null;
+  const INGEST_ENDPOINT =
+    currentScript?.getAttribute("data-endpoint") ||
+    "http://localhost:8000/api/v1/events";
 
   // Prevent multiple initializations
   if (window.__redspotTrackerInitialized) return;
@@ -10,6 +15,7 @@
       const target = event.target instanceof Element ? event.target : null;
       const payload = {
         event_type: "click",
+        site_id: SITE_ID,
         url: window.location.href,
         path: window.location.pathname,
         timestamp: new Date().toISOString(),
